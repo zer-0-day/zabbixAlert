@@ -1,4 +1,4 @@
-﻿#Старница авторизации
+﻿#старница авторизации. Используя токен
 $Global:timeout = 60
 $baseurl = 'https://zabbix.office.partner-its.ru'
 $params = @{
@@ -13,9 +13,9 @@ $params = @{
     method = "Post"
 }
 $result = Invoke-WebRequest @params
-#
+#цикл проверки
 while (1 -eq 1) {
-#Обращение к api триггеров 
+#обращение к api триггеров 
 $params.body = @{
     "jsonrpc"= "2.0"
     "method"= "trigger.get"
@@ -41,6 +41,7 @@ $result = $result.Content
 
 #конвертирование json в PSObject
 $userObject = ConvertFrom-Json -InputObject $result
+
 #сортировка полученных объектов
 $Global:problemList = ($userobject.result |Where-Object description |Select-Object description) -replace "{description=" , "" -replace "}" , "" -replace "@" , ""
 
@@ -75,7 +76,8 @@ Add-Type -AssemblyName PresentationFramework
 "@
 $NR = (New-Object System.Xml.XmlNodeReader $form)
 $window = [Windows.Markup.XamlReader]::Load($NR)
-#Кнопка "Отложить" . Приостанавливает работу программы на 1 минуту 
+
+#кнопка "Отложить" . Приостанавливает работу программы на 1 минуту 
 $buttonDelay = $window.FindName("Delay") #Добавить всплывающее уведомление
 $buttonDelay.add_click(
     {
@@ -83,7 +85,8 @@ $buttonDelay.add_click(
     Start-Sleep -Seconds 60  
     }
 )
-#Кнопка "Принять" приостанавливает работу программы на 1 час
+
+#кнопка "Принять" приостанавливает работу программы на 1 час
 $buttonAcept = $window.FindName("Acept")
 $buttonAcept.add_click(
     {
@@ -92,8 +95,7 @@ $buttonAcept.add_click(
     }
 
 )
-
-
+#инициализация формы с описанием проблемы
 $window.ShowDialog()
 }
 
@@ -106,8 +108,9 @@ if ($problemList) {
 #вызов функции ErrorMessageBox, вывод сообщения об ошибке  
 ErrorMessageBox
 Write-Host $problemList
- 
 }
+
+#если проблем нет
 if (!($problemList)){  
 #изменение таймаута запросов к zabbix        
     $timeout = 15
