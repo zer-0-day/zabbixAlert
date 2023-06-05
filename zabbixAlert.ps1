@@ -6,7 +6,7 @@ $params = @{
         "jsonrpc"= "2.0"
         "method"= "user.login"
         "id"= 1
-        auth = "7583ac62514ee6e6008f383bbc0e5ccf"   
+        auth = ""   
     } | ConvertTo-Json
     uri = "$baseurl/api_jsonrpc.php"
     headers = @{"Content-Type" = "application/json"}
@@ -32,7 +32,7 @@ $params.body = @{
         expandDescription = "True"
         
     }
-auth = "7583ac62514ee6e6008f383bbc0e5ccf"
+auth = ""
 #($result.Content | ConvertFrom-Json).result
 id = 2
 } | ConvertTo-Json
