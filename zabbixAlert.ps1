@@ -1,4 +1,5 @@
 ﻿#старница авторизации. Используя токен
+$cred = Get-Credential
 $Global:timeout = 60
 $baseurl = 'https://zabbix.office.partner-its.ru'
 $params = @{
@@ -6,7 +7,7 @@ $params = @{
         "jsonrpc"= "2.0"
         "method"= "user.login"
         "id"= 1
-        auth = ""   
+        auth = $cred  
     } | ConvertTo-Json
     uri = "$baseurl/api_jsonrpc.php"
     headers = @{"Content-Type" = "application/json"}
@@ -32,7 +33,7 @@ $params.body = @{
         expandDescription = "True"
         
     }
-auth = ""
+auth = $cred
 #($result.Content | ConvertFrom-Json).result
 id = 2
 } | ConvertTo-Json
@@ -119,37 +120,14 @@ Start-Sleep -Seconds $timeout
 }
 
 # Получение токена
-<#$zabbixUrl = "http://zabbix.example.com/api_jsonrpc.php"
-$zabbixUser = "admin"
-$zabbixPassword = "password"
+<#$token = @{
+    "jsonrpc"= "2.0"
+    "method"= "token.get"
+    "params" = @{
+        token = ""
 
-# Формируем запрос к API Zabbix для авторизации
-$authRequest = @{
-    jsonrpc = "2.0"
-    method = "user.login"
-    params = @{
-        user = $zabbixUser
-        password = $zabbixPassword
     }
-    id = 1
-}
-
-# Отправляем запрос к API Zabbix для авторизации
-$authResponse = Invoke-RestMethod -Uri $zabbixUrl -Method Post -Body (ConvertTo-Json $authRequest)
-
-# Получаем токен авторизации из ответа
-$authToken = $authResponse.result
-
-# Формируем запрос к API Zabbix для получения списка пользователей
-$userRequest = @{
-    jsonrpc = "2.0"
-    method = "user.get"
-    params = @{
-        output = "extend"
-        filter = @{
-            alias = ""
-        }
-    }
-    auth = $authToken
+    auth = ($result.Content | ConvertFrom-Json).result
     id = 2
-}#>
+
+}|ConvertTo-Json #>
